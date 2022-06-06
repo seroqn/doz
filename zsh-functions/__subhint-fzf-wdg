@@ -8,7 +8,7 @@ function (){
     echo
   fi
   if [[ -n "$out" ]]; then
-    sel=$(echo "$out" | fzf --prompt='subhint > ')
+    sel=$(echo "$out" | fzf --prompt='subhint > ' --exact)
     if [[ -n "$sel" ]]; then
       if [[ ! "$LBUFFER" =~ ' $' ]]; then
         LBUFFER="$LBUFFER "
