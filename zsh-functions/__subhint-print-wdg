@@ -1,0 +1,15 @@
+#!/bin/zsh -f
+emulate -L zsh
+
+function (){
+  local out
+  out="$(__subhint-get-hints)"
+  if [[ $? -ne 0 ]]; then
+    echo
+  fi
+  if [[ -n "$out" ]]; then
+    echo
+    echo "$out"
+  fi
+  zle reset-prompt
+}

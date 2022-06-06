@@ -1,0 +1,8 @@
+#!/bin/zsh -f
+function (){
+  if [[ "$LBUFFER" =~ '^ *$' ]]; then
+    return
+  fi
+  deno run --no-check --allow-env --allow-read "$SUBHINT_ROOT/src/cli.ts" "$LBUFFER"
+  return $?
+}
