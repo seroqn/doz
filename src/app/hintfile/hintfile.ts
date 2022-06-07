@@ -3,12 +3,12 @@ import { Entry } from "./type__hintfile.ts";
 
 export function getHintFilePath(): string {
   const FBASE = "hints.yml";
-  const homepath = Deno.env.get("SUBHINT_HOME");
+  const homepath = Deno.env.get("EXHINT_HOME");
   if (homepath) {
     return path.join(homepath, FBASE);
   }
   const configPaths = xdg.configDirs().map((rootdir) =>
-    path.join(rootdir, "shell-subhint", FBASE)
+    path.join(rootdir, "shell-exhint", FBASE)
   );
   return configPaths.find((pth) => existsSync(pth)) ?? configPaths[0];
 }

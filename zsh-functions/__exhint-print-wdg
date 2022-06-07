@@ -3,7 +3,7 @@ emulate -L zsh
 
 function (){
   local out
-  out="$(__subhint-get-hints)"
+  out="$(__exhint-get-hints)"
   if [[ $? -ne 0 ]]; then
     echo
   fi
