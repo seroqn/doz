@@ -3,7 +3,7 @@ emulate -L zsh
 
 function (){
   local out
-  out="$(__exhint-get-hints)"
+  out="$(__shdo-deno)"
   if [[ $? -ne 0 ]]; then
     echo
   fi

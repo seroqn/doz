@@ -3,12 +3,12 @@ emulate -L zsh
 
 function (){
   local out sel
-  out="$(__exhint-get-hints)"
+  out="$(__shdo-deno)"
   if [[ $? -ne 0 ]]; then
     echo
   fi
   if [[ -n "$out" ]]; then
-    sel=$(echo "$out" | fzf --prompt='exhint > ' --exact)
+    sel=$(echo "$out" | fzf --prompt='shdo > ' --exact)
     if [[ -n "$sel" ]]; then
       if [[ ! "$LBUFFER" =~ ' $' ]]; then
         LBUFFER="$LBUFFER "
