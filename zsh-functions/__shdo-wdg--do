@@ -1,15 +1,30 @@
 #!/bin/zsh -f
 emulate -L zsh
+if whence __shdo-load >/dev/null; then
+else
+  builtin autoload -Uz __shdo-load && __shdo-load
+fi
 
 function (){
   local out
   out="$(__shdo-deno)"
   if [[ $? -ne 0 ]]; then
     echo
+  elif [[ -z "$out" ]]; then
+    zle reset-prompt
+    return
   fi
-  if [[ -n "$out" ]]; then
-    echo
-    echo "$out"
-  fi
+
+  local outary=("${(f)out}")
+  case "${outary[1]}" in
+    kind:hint)
+      __shdo-print "${(F)${outary[@]:1}}"
+      ;;
+    kind:expand)
+      LBUFFER="${(F)${outary[@]:1}}"
+      ;;
+    *)
+      __shdo-print "unknown kind: \`${outary[1]}\`"
+  esac
   zle reset-prompt
 }

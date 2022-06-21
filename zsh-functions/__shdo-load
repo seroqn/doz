@@ -1,0 +1,4 @@
+#!/bin/zsh -f
+emulate -L zsh
+autoload -Uz __shdo-deno
+autoload -Uz __shdo-print

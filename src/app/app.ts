@@ -16,14 +16,15 @@ export function execCli(lbuffer: string) {
   if (!targEntry) {
     Deno.exit();
   } else if ("expand" in targEntry) {
-    if (_isExpantionMatched(targEntry.expand, lbuffer)) {
-      console.log("mode:expand");
-      console.log(targEntry.expand);
+    const newLbuf = _replaceExpantion(targEntry.expand, lbuffer)
+    if (newLbuf) {
+      console.log("kind:expand");
+      console.log(newLbuf);
       Deno.exit();
     }
   }
   if ("hints" in targEntry) {
-    console.log("mode:hints");
+    console.log("kind:hint");
     for (let str of targEntry.hints){
       let out = _parseHint(str);
       if (out) {
@@ -43,20 +44,18 @@ export function _findTargEntry(entries: Entry[], lbuffer: string) {
     }
     return !("patterns" in entry) ||
       entry.patterns.every((pat: string) => (new RegExp(pat)).test(lbuffer));
-    //for (let pat of entry.patterns) {
-    //if ((new RegExp(pat)).test(lbuffer)) {
-    //return true;
-    //}
-    //}
-    //return false;
   });
 }
-export function _isExpantionMatched(
+export function _replaceExpantion(
   expantion: Record<string, string | null>,
   lbuffer: string,
 ) {
   const crrWordMatches = lbuffer.match(/\S+$/);
-  return (crrWordMatches && crrWordMatches[0] in expantion) || false;
+  if (!(crrWordMatches && crrWordMatches[0] in expantion)){
+    return null
+  }
+  const expandee: string = expantion[crrWordMatches[0]]
+  return lbuffer.slice(0, crrWordMatches.index) + expandee
 }
 export function _parseHint(hint: string) {
   const result = /^\s*([^: ]+)(:\s*)?(.+)?$/.exec(hint); // `:` is separator

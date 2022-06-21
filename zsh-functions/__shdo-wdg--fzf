@@ -1,5 +1,9 @@
 #!/bin/zsh -f
 emulate -L zsh
+if whence __shdo-load >/dev/null; then
+else
+  builtin autoload -Uz __shdo-load && __shdo-load
+fi
 
 function (){
   local out sel

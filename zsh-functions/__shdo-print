@@ -1,0 +1,7 @@
+#!/bin/zsh -f
+echo # コマンドラインの次の行から表示を始めさせる
+echo "$1"
+local -i i
+for ((i=${(wf)#PS1}; i>1; i--)); do # for multi line prompt
+  echo # append NL
+done

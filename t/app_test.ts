@@ -1,5 +1,5 @@
 import { assertEquals, describe, it } from "./deps.ts"
-import {_findTargEntry, _isExpantionMatched, _parseHint} from "src/app/app.ts";
+import {_findTargEntry, _replaceExpantion, _parseHint} from "src/app/app.ts";
 
 describe('app', ()=>{
   const entry1 = {
@@ -82,17 +82,17 @@ describe('app', ()=>{
       })
     })
   })
-  describe('_isExpantionMatched()', ()=>{
+  describe('_replaceExpantion()', ()=>{
     const expantion = {'--h': '--help', '--v': '--version'}
     it('expantion not matched', ()=>{
-      assertEquals(_isExpantionMatched(expantion, ''), false)
-      assertEquals(_isExpantionMatched(expantion, 'git --h i'), false)
-      assertEquals(_isExpantionMatched(expantion, 'git --h '), false)
+      assertEquals(_replaceExpantion(expantion, ''), null)
+      assertEquals(_replaceExpantion(expantion, 'git --h i'), null)
+      assertEquals(_replaceExpantion(expantion, 'git --h '), null)
     })
     it('expantion matched', ()=>{
-      assertEquals(_isExpantionMatched(expantion, 'git --h'), true)
-      assertEquals(_isExpantionMatched(expantion, 'git --v'), true)
-      assertEquals(_isExpantionMatched(expantion, '--h'), true)
+      assertEquals(_replaceExpantion(expantion, 'git --h'), 'git --help')
+      assertEquals(_replaceExpantion(expantion, 'git --v'), 'git --version')
+      assertEquals(_replaceExpantion(expantion, '--h'), '--help')
     })
   })
   describe('_parseHint()', ()=>{
