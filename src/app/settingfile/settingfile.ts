@@ -1,5 +1,5 @@
-import { existsSync, parseYaml, path, xdg, fs } from "../deps.ts";
-import { Entry } from "./type.ts";
+import { existsSync, parseYaml, path, xdg } from "../deps.ts";
+import { Entry, isEntry } from "./type.ts";
 
 export function getSettingFilePath(): string {
   const FBASE = "config.yml";
@@ -19,13 +19,21 @@ export function loadSettingFile(pth: string): Entry[] | undefined {
     return undefined;
   }
   const text = Deno.readTextFileSync(pth);
-  let entries: Entry[] | undefined;
+  //let entries: Entry[] | undefined;
+  let ets: unknown[] | undefined;
   try {
-    // TODO: 型を保証したい
-    entries = parseYaml(text) as Entry[] | undefined;
+    ets = parseYaml(text);
   } catch (e: unknown) {
     console.error("Setting parsed error");
     throw (e);
   }
-  return entries ?? [];
+  if (!ets) {
+    return [];
+  }
+  for (let et of ets) {
+    if (!isEntry(et)) {
+      throw new Error(`invalid entry: ${JSON.stringify(et)}`);
+    }
+  }
+  return ets;
 }

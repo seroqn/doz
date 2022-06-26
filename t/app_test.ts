@@ -1,119 +1,88 @@
-import { assertEquals, describe, it } from "./deps.ts"
-import {_findTargEntry, _replaceExpantion, _parseHint} from "src/app/app.ts";
+import {_nextEntryIdx, _ejectEvaledPath} from "src/app/app.ts";
+import { assertEquals, afterEach, describe, it } from "t/deps.ts"
+import {Helper, setEnv} from "t/helper.ts";
 
 describe('app', ()=>{
-  const entry1 = {
-    current: 'git',
-    hints: [
-      'add: Add file contents to the index',
-      'mv: Move or rename a file, a directory, or a symlink',
-      'restore: Restore working tree files',
-      'rm: Remove files from the working tree and from the index',
-      'sparse-checkout: Initialize and modify the sparse-checkout',
-    ],
-  }
-  const entry2 = {
-    current: 'git mv',
-    hints: [
-      '-f: Force renaming or moving of a file even if the target exists',
-      '-k: Skip move or rename actions which would lead to an error condition. ',
-      '-n: Do nothing; only show what would happen',
-      '-v: Report the names of files as they are moved.',
-    ],
-  }
-  const entry3 = {
-    patterns: ['git a$'],
-    hints: [
-      'aa: -A',
-      'ap: --patch',
-      'au: --update',
-    ],
-  }
-  const spec1 = [entry1, entry2, entry3]
-
-  const xp_entry1 = {
-    patterns: ['git'],
-    expand: {org: 'origin', 'mas': 'master'},
-  }
-  const xp_entry2 = {
-    expand: {'--h': '--help', '--v': '--version'},
-  }
-  const xp_spec = [xp_entry1, xp_entry2]
-
-  describe('_findTargEntry()', ()=>{
+  describe('_nextEntryIdx()', ()=>{
     describe('current', ()=>{
+      const spec = [
+        {current: 'git'},
+        {current: 'git mv'},
+        {patterns: ['git a$']},
+      ]
       it('not found', ()=>{
-        assertEquals(_findTargEntry(spec1, ''), undefined)
-        assertEquals(_findTargEntry(spec1, 'foo'), undefined)
-        assertEquals(_findTargEntry(spec1, 'gith'), undefined)
+        assertEquals(_nextEntryIdx(spec, '', 0), -1)
+        assertEquals(_nextEntryIdx(spec, 'foo', 0), -1)
+        assertEquals(_nextEntryIdx(spec, 'gith', 0), -1)
       })
       it('match `current`', ()=>{
-        assertEquals(_findTargEntry(spec1, 'git'), entry1)
-        assertEquals(_findTargEntry(spec1, 'git  '), entry1)
-        assertEquals(_findTargEntry(spec1, 'foo git'), entry1)
-        assertEquals(_findTargEntry(spec1, 'foo git '), entry1)
+        assertEquals(_nextEntryIdx(spec, 'git', 0), 0)
+        assertEquals(_nextEntryIdx(spec, 'git  ', 0), 0)
+        assertEquals(_nextEntryIdx(spec, 'foo git', 0), 0)
+        assertEquals(_nextEntryIdx(spec, 'foo git ', 0), 0)
       })
       it('match subcmd', ()=>{
-        assertEquals(_findTargEntry(spec1, 'git mv'), entry2)
-        assertEquals(_findTargEntry(spec1, 'git mv '), entry2)
-        assertEquals(_findTargEntry(spec1, 'git  mv '), undefined)
-        assertEquals(_findTargEntry(spec1, 'git mva'), undefined)
+        assertEquals(_nextEntryIdx(spec, 'git mv', 0), 1)
+        assertEquals(_nextEntryIdx(spec, 'git mv ', 0), 1)
+        assertEquals(_nextEntryIdx(spec, 'git  mv ', 0), -1)
+        assertEquals(_nextEntryIdx(spec, 'git mva', 0), -1)
       })
     })
     describe('patterns', ()=>{
+      const spec = [
+        {current: 'git'},
+        {current: 'git mv'},
+        {patterns: ['git a$']},
+      ]
       it('match pattern', ()=>{
-        assertEquals(_findTargEntry(spec1, 'git a'), entry3)
+        assertEquals(_nextEntryIdx(spec, 'git a', 0), 2)
       })
       it('not match pattern', ()=>{
-        assertEquals(_findTargEntry(spec1, 'git a '), undefined)
-        assertEquals(_findTargEntry(spec1, 'git  a'), undefined)
+        assertEquals(_nextEntryIdx(spec, 'git a ', 0), -1)
+        assertEquals(_nextEntryIdx(spec, 'git  a', 0), -1)
       })
     })
-    describe('expand', ()=>{
+
+    describe('no-condition', ()=>{
+      const spec = [
+        {patterns: ['git']},
+        {},
+        {current: 'awk'},
+        {},
+      ]
       it('match anything when condition is not defined', ()=>{
-        assertEquals(_findTargEntry(xp_spec, ''), xp_entry2)
-        assertEquals(_findTargEntry(xp_spec, ' '), xp_entry2)
-        assertEquals(_findTargEntry(xp_spec, ' aba '), xp_entry2)
+        assertEquals(_nextEntryIdx(spec, '', 0), 1)
+        assertEquals(_nextEntryIdx(spec, ' ', 0), 1)
+        assertEquals(_nextEntryIdx(spec, ' aba ', 0), 1)
       })
       it('match anything when condition is not defined', ()=>{
-        assertEquals(_findTargEntry(xp_spec, 'git'), xp_entry1)
-        assertEquals(_findTargEntry(xp_spec, ' git add'), xp_entry1)
-        assertEquals(_findTargEntry(xp_spec, ' git log | less '), xp_entry1)
+        assertEquals(_nextEntryIdx(spec, 'git', 0), 0)
+        assertEquals(_nextEntryIdx(spec, ' git add', 0), 0)
+        assertEquals(_nextEntryIdx(spec, ' git log | less ', 0), 0)
+      })
+      it('giving index argument, search next entry', ()=>{
+        assertEquals(_nextEntryIdx(spec, 'git', 1), 1)
+        assertEquals(_nextEntryIdx(spec, 'git', 2), 3)
       })
     })
   })
-  describe('_replaceExpantion()', ()=>{
-    const expantion = {'--h': '--help', '--v': '--version'}
-    it('expantion not matched', ()=>{
-      assertEquals(_replaceExpantion(expantion, ''), null)
-      assertEquals(_replaceExpantion(expantion, 'git --h i'), null)
-      assertEquals(_replaceExpantion(expantion, 'git --h '), null)
+
+  describe('_ejectEvaledPath()', ()=>{
+    const helper = new Helper()
+    afterEach(()=>{
+      helper.restore()
     })
-    it('expantion matched', ()=>{
-      assertEquals(_replaceExpantion(expantion, 'git --h'), 'git --help')
-      assertEquals(_replaceExpantion(expantion, 'git --v'), 'git --version')
-      assertEquals(_replaceExpantion(expantion, '--h'), '--help')
+    it('パスが `$` から始まっていれば環境変数と見なして置換し,`file://` を先頭に加える', ()=>{
+      setEnv('SHDO_HOME', '/tmp/foo')
+      const kind2pth = {foo: {raw: '$SHDO_HOME/bar/baz.ts', evaled: null}}
+      assertEquals(_ejectEvaledPath(kind2pth, 'foo'), 'file:///tmp/foo/bar/baz.ts')
+      assertEquals(kind2pth.foo.evaled, 'file:///tmp/foo/bar/baz.ts')
     })
-  })
-  describe('_parseHint()', ()=>{
-    it('skip empty string', ()=>{
-      assertEquals(_parseHint(''), null)
-      assertEquals(_parseHint(' '), null)
-    })
-    it('skip empty label', ()=>{
-      assertEquals(_parseHint(':'), null)
-      assertEquals(_parseHint(' :'), null)
-      assertEquals(_parseHint(' : foo'), null)
-    })
-    it('return only label when description is empty', ()=>{
-      assertEquals(_parseHint('foo:'), 'foo\t')
-      assertEquals(_parseHint(' foo:'), 'foo\t')
-      assertEquals(_parseHint('foo: '), 'foo\t')
-    })
-    it('return rable and description when both is given', ()=>{
-      assertEquals(_parseHint('foo: FOO'), 'foo\tFOO')
-      assertEquals(_parseHint(' foo: FOO'), 'foo\tFOO')
-      assertEquals(_parseHint('foo:FOO'), 'foo\tFOO')
+    it('evaled にすでに展開された文字列がある場合はそのまま `file://` を先頭に加える', ()=>{
+      setEnv('SHDO_HOME', '/tmp/foo')
+      const kind2pth = {foo: {raw: '$SHDO_HOME/bar/baz.ts', evaled: 'file:///hoge/fuga'}}
+      assertEquals(_ejectEvaledPath(kind2pth, 'foo'), 'file:///hoge/fuga')
     })
   })
+
 })
