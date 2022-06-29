@@ -5,8 +5,6 @@ export type Entry = {
   patterns?: string[];
   kind?: string;
   what?: unknown;
-  //hints?: string[];
-  //expand?: Record<string, string | null>;
 };
 
 export function isEntry(et: any): et is Entry {

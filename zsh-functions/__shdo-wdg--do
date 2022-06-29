@@ -16,15 +16,18 @@ function (){
   fi
 
   local outary=("${(f)out}")
-  case "${outary[1]}" in
-    kind:hint)
-      __shdo-print "${(F)${outary[@]:1}}"
-      ;;
-    kind:expand)
-      LBUFFER="${(F)${outary[@]:1}}"
-      ;;
-    *)
-      __shdo-print "unknown kind: \`${outary[1]}\`"
-  esac
+  local argv="${(F)${(@)outary[1,-2]}}"
+  local ftail="${outary[-1]}"
+  local ext file
+  for ext in zsh sh; do
+    if [[ -f "$ftail.$ext" ]]; then
+      file="$ftail.$ext"
+      break
+    fi
+  done
+  if [[ -z "$file" ]]; then
+    __shdo-print "fail in loading kind file: \`$ftail.{zsh,sh}\`"
+  fi
+  source "$file"
   zle reset-prompt
 }

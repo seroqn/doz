@@ -1,6 +1,7 @@
 {
   "imports": {
     "src/": "../src/",
+    "kinds/": "../kinds/",
     "t/": "./"
   }
 }

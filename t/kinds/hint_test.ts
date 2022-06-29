@@ -1,4 +1,4 @@
-import {_parseHint} from "src/shdo-kinds/hint/hint.ts";
+import {_parseHint} from "kinds/hint/hint.ts";
 import { assertEquals, afterEach, describe, it } from "t/deps.ts"
 
 describe('kinds/hint', ()=>{

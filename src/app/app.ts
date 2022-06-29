@@ -3,8 +3,8 @@ import {
   loadSettingFile,
 } from "./settingfile/settingfile.ts";
 import { conditionNames, Entry } from "./settingfile/type.ts";
-import { loadKindFile } from "./kindfile/kindfile.ts";
-import { Kind2Path } from "./kindfile/type.ts";
+import { loadKindMap } from "./kindMap/kindMap.ts";
+import { KindMap } from "./kindMap/type.ts";
 import { path } from "./deps.ts";
 
 export async function execCli(lbuffer: string) {
@@ -15,8 +15,8 @@ export async function execCli(lbuffer: string) {
   } else if (!entries.length) {
     Deno.exit(0);
   }
-  const kind2pth = loadKindFile(path.dirname(stpth));
-  switch (await _findAndFire(entries, lbuffer, kind2pth)) {
+  const kindMap = await loadKindMap();
+  switch (await _findAndFire(entries, lbuffer, kindMap)) {
     case 0:
       Deno.exit();
       break;
@@ -30,7 +30,7 @@ export async function execCli(lbuffer: string) {
 async function _findAndFire(
   entries: Entry[],
   lbuffer: string,
-  kind2pth: Kind2Path,
+  kindMap: KindMap,
 ) {
   for (let idx = 0, len = entries.length; idx < len; idx++) {
     idx = _nextEntryIdx(entries, lbuffer, idx);
@@ -41,26 +41,33 @@ async function _findAndFire(
     const kind = "kind" in targEntry
       ? targEntry.kind
       : Deno.env.get("SHDO_DEFAULT_KIND") ?? "hint";
-    if (!(kind in kind2pth)) {
+    if (!(kind in kindMap)) {
       console.error(`such kind is not found: "${kind}"`);
       return 1;
     }
-    const mod = kind2pth[kind].mod ??
-      await import(_ejectEvaledPath(kind2pth, kind));
-    kind2pth[kind].mod = mod;
+    let mod = kindMap[kind].scriptMod;
+    if (!mod) {
+      const pth = _findScriptPath(kindMap, kind);
+      if (!pth) {
+        console.error(`script file cannot load: "${pth}"`);
+        Deno.exit(1);
+      }
+      mod = await import("file://" + pth); // `file://` をつけないと Windows 環境では動かなかったりする
+      kindMap[kind].scriptMod = mod;
+    }
     if (!("fire" in mod)) {
       console.error(`"fire()" is not defined : "${kind}"`);
       continue;
     }
-    let [doFinish, output]: [boolean, string | null | undefined] = mod.fire(
+    let [isMatched, output]: [boolean, string | null | undefined] = mod.fire(
       lbuffer,
       targEntry.what,
     );
-    if (doFinish) {
-      console.log(`kind:${kind}`);
+    if (isMatched) {
       if (output) {
         console.log(output);
       }
+      console.log(`${kindMap[kind].head}/${kind}/${kind}`);
       return 0;
     }
   }
@@ -83,17 +90,14 @@ export function _nextEntryIdx(entries: Entry[], lbuffer: string, idx: number) {
   }
   return -1;
 }
-export function _ejectEvaledPath(kind2pth: Kind2Path, kind: string) {
-  if (!kind2pth[kind].evaled) {
-    kind2pth[kind].evaled = kind2pth[kind].raw.replace(
-      /^\$[^/:*?"<>|\\]+/,
-      (match: string) => {
-        return Deno.env.get(match.slice(1)) ?? match;
-      },
-    );
+
+function _findScriptPath(kindMap: KindMap, kind: string) {
+  let pth = path.join(kindMap[kind].head, kind, `${kind}.ts`);
+  let file = null;
+  try {
+    file = Deno.statSync(pth);
+  } catch (e) {
+    return null;
   }
-  if (!/^file:/.test(kind2pth[kind].evaled)) {
-    kind2pth[kind].evaled = "file://" + kind2pth[kind].evaled;
-  }
-  return kind2pth[kind].evaled;
+  return file.isFile ? pth : null;
 }

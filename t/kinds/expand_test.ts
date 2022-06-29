@@ -1,4 +1,4 @@
-import {_replaceExpansion} from "src/shdo-kinds/expand/expand.ts";
+import {_replaceExpansion} from "kinds/expand/expand.ts";
 import { assertEquals, describe, it } from "t/deps.ts"
 
 describe('kinds/expand', ()=>{

@@ -2,7 +2,7 @@ import { existsSync, parseYaml, path, xdg } from "../deps.ts";
 import { Entry, isEntry } from "./type.ts";
 
 export function getSettingFilePath(): string {
-  const FBASE = "config.yml";
+  const FBASE = "entries.yml";
   const homepath = Deno.env.get("SHDO_HOME");
   if (homepath) {
     return path.join(homepath, FBASE);
@@ -19,7 +19,6 @@ export function loadSettingFile(pth: string): Entry[] | undefined {
     return undefined;
   }
   const text = Deno.readTextFileSync(pth);
-  //let entries: Entry[] | undefined;
   let ets: unknown[] | undefined;
   try {
     ets = parseYaml(text);

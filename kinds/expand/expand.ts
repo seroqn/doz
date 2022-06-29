@@ -1,19 +1,10 @@
-type ExpansionWhat = {
-  expansion: {
-    [key: string]: string;
-  };
-};
-function isExpansionWhat(what: any): what is ExpansionWhat {
-  return (
-    typeof what === "object" &&
-    "expansion" in what &&
-    typeof what.expansion === "object" &&
-    Object.values(what.expansion).every((item) => typeof item === "string")
-  );
+type Expansion = {[abbr: string]: string}
+function isExpansion(targ: any): targ is Expansion{
+  return typeof targ == 'object' && Object.values(targ).every((value) => typeof value == "string")
 }
 
 export function fire(lbuffer: string, what: unknown) {
-  if (!isExpansionWhat(what)) {
+  if (!(typeof what == "object" && 'expansion' in what && isExpansion(what.expansion))) {
     console.error(`invalid "what": ${JSON.stringify(what)}`);
     Deno.exit(1);
   }

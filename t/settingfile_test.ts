@@ -3,7 +3,7 @@ import { assertEquals, afterEach, describe, it, path } from "t/deps.ts"
 import {Helper, setEnv, delEnv} from "t/helper.ts";
 
 describe('settingfile', ()=>{
-  const FBASE = "config.yml"
+  const FBASE = "entries.yml"
   const CFG_DIR_NAME = "shdo"
   const helper = new Helper()
   afterEach(()=>{
@@ -44,30 +44,30 @@ describe('settingfile', ()=>{
   describe('loadSettingFile()', ()=>{
     it('parse settingfile', ()=>{
       const tmpDir = helper.getTmpDir()
-      const fpath = path.join(tmpDir, "config.yml")
+      const fpath = path.join(tmpDir, FBASE)
       Deno.writeTextFileSync(
         fpath,
         [
           ` # config`,
           ` - current: git`,
           `   hints:`,
-          `     - 'add: Add file contents to the index'`,
-          `     - 'mv: Move or rename a file, a directory, or a symlink'`,
-          `     - 'restore: Restore working tree files'`,
-          `     - 'rm: Remove files from the working tree and from the index'`,
-          `     - 'sparse-checkout: Initialize and modify the sparse-checkout'`,
+          `     - 'add :: Add file contents to the index'`,
+          `     - 'mv :: Move or rename a file, a directory, or a symlink'`,
+          `     - 'restore :: Restore working tree files'`,
+          `     - 'rm :: Remove files from the working tree and from the index'`,
+          `     - 'sparse-checkout :: Initialize and modify the sparse-checkout'`,
           ` - current: git mv`,
           `   hints:`,
-          `     - '-f: Force renaming or moving of a file even if the target exists'`,
-          `     - '-k: Skip move or rename actions which would lead to an error condition. '`,
-          `     - '-n: Do nothing; only show what would happen'`,
-          `     - '-v: Report the names of files as they are moved.'`,
+          `     - '-f :: Force renaming or moving of a file even if the target exists'`,
+          `     - '-k :: Skip move or rename actions which would lead to an error condition. '`,
+          `     - '-n :: Do nothing; only show what would happen'`,
+          `     - '-v :: Report the names of files as they are moved.'`,
           ` - patterns:`,
           `   - git a$`,
           `   hints:`,
-          `     - 'aa: -A'`,
-          `     - 'ap: --patch'`,
-          `     - 'au: --update'`,
+          `     - 'aa :: -A'`,
+          `     - 'ap :: --patch'`,
+          `     - 'au :: --update'`,
           ` - patterns:`,
           `   - git`,
           `   expand:`,
@@ -81,28 +81,28 @@ describe('settingfile', ()=>{
       const expected = [
         {
           current: 'git', hints: [
-            'add: Add file contents to the index',
-            'mv: Move or rename a file, a directory, or a symlink',
-            'restore: Restore working tree files',
-            'rm: Remove files from the working tree and from the index',
-            'sparse-checkout: Initialize and modify the sparse-checkout',
+            'add :: Add file contents to the index',
+            'mv :: Move or rename a file, a directory, or a symlink',
+            'restore :: Restore working tree files',
+            'rm :: Remove files from the working tree and from the index',
+            'sparse-checkout :: Initialize and modify the sparse-checkout',
           ]
         },
         {
           current: 'git mv',
           hints: [
-            '-f: Force renaming or moving of a file even if the target exists',
-            '-k: Skip move or rename actions which would lead to an error condition. ',
-            '-n: Do nothing; only show what would happen',
-            '-v: Report the names of files as they are moved.',
+            '-f :: Force renaming or moving of a file even if the target exists',
+            '-k :: Skip move or rename actions which would lead to an error condition. ',
+            '-n :: Do nothing; only show what would happen',
+            '-v :: Report the names of files as they are moved.',
           ]
         },
         {
           patterns: ['git a$'],
           hints: [
-            'aa: -A',
-            'ap: --patch',
-            'au: --update',
+            'aa :: -A',
+            'ap :: --patch',
+            'au :: --update',
           ]
         },
         {
