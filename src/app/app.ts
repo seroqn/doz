@@ -2,62 +2,102 @@ import {
   getSettingFilePath,
   loadSettingFile,
 } from "./settingfile/settingfile.ts";
-import { Entry } from "./settingfile/type.ts";
+import { conditionNames, Entry } from "./settingfile/type.ts";
+import { loadKindMap } from "./kindMap/kindMap.ts";
+import { KindMap } from "./kindMap/type.ts";
+import { path } from "./deps.ts";
 
-export function execCli(lbuffer: string) {
-  const pth = getSettingFilePath();
-  const entries = loadSettingFile(pth);
+export async function execCli(lbuffer: string) {
+  const stpth = getSettingFilePath();
+  const entries = loadSettingFile(stpth);
   if (!entries) {
     Deno.exit(1);
   } else if (!entries.length) {
     Deno.exit(0);
   }
-  const targEntry = _findTargEntry(entries, lbuffer);
-  if (!targEntry) {
-    Deno.exit();
-  } else if ("expand" in targEntry) {
-    const newLbuf = _replaceExpantion(targEntry.expand, lbuffer)
-    if (newLbuf) {
-      console.log("kind:expand");
-      console.log(newLbuf);
+  const kindMap = await loadKindMap();
+  switch (await _findAndFire(entries, lbuffer, kindMap)) {
+    case 0:
       Deno.exit();
-    }
+      break;
+    case 1:
+      Deno.exit(1);
+      break;
   }
-  if ("hints" in targEntry) {
-    console.log("kind:hint");
-    for (let str of targEntry.hints){
-      let out = _parseHint(str);
-      if (out) {
-        console.log(out);
-      }
-    }
-  }
-  Deno.exit();
+  return;
 }
 
-export function _findTargEntry(entries: Entry[], lbuffer: string) {
-  return entries.find((entry: Entry) => {
+async function _findAndFire(
+  entries: Entry[],
+  lbuffer: string,
+  kindMap: KindMap,
+) {
+  for (let idx = 0, len = entries.length; idx < len; idx++) {
+    idx = _nextEntryIdx(entries, lbuffer, idx);
+    if (idx == -1) {
+      return 0;
+    }
+    const targEntry = entries[idx];
+    const kind = "kind" in targEntry
+      ? targEntry.kind
+      : Deno.env.get("SHDO_DEFAULT_KIND") ?? "hint";
+    if (!(kind in kindMap)) {
+      console.error(`such kind is not found: "${kind}"`);
+      return 1;
+    }
+    let mod = kindMap[kind].scriptMod;
+    if (!mod) {
+      const pth = _findScriptPath(kindMap, kind);
+      if (!pth) {
+        console.error(`script file cannot load: "${pth}"`);
+        Deno.exit(1);
+      }
+      mod = await import("file://" + pth); // `file://` をつけないと Windows 環境では動かなかったりする
+      kindMap[kind].scriptMod = mod;
+    }
+    if (!("fire" in mod)) {
+      console.error(`"fire()" is not defined : "${kind}"`);
+      continue;
+    }
+    let [isMatched, output]: [boolean, string | null | undefined] = mod.fire(
+      lbuffer,
+      targEntry.what,
+    );
+    if (isMatched) {
+      if (output) {
+        console.log(output);
+      }
+      console.log(`${kindMap[kind].head}/${kind}/${kind}`);
+      return 0;
+    }
+  }
+  return 0;
+}
+export function _nextEntryIdx(entries: Entry[], lbuffer: string, idx: number) {
+  for (let i = idx, len = entries.length; i < len; i++) {
+    let entry = entries[i];
     if ("current" in entry) {
       if (!(new RegExp(entry.current + "\\s*$").test(lbuffer))) {
-        return false;
+        continue;
       }
     }
-    return !("patterns" in entry) ||
-      entry.patterns.every((pat: string) => (new RegExp(pat)).test(lbuffer));
-  });
-}
-export function _replaceExpantion(
-  expantion: Record<string, string | null>,
-  lbuffer: string,
-) {
-  const crrWordMatches = lbuffer.match(/\S+$/);
-  if (!(crrWordMatches && crrWordMatches[0] in expantion)){
-    return null
+    if (
+      !("patterns" in entry) ||
+      entry.patterns.every((pat: string) => (new RegExp(pat)).test(lbuffer))
+    ) {
+      return i;
+    }
   }
-  const expandee: string = expantion[crrWordMatches[0]]
-  return lbuffer.slice(0, crrWordMatches.index) + expandee
+  return -1;
 }
-export function _parseHint(hint: string) {
-  const result = /^\s*([^: ]+)(:\s*)?(.+)?$/.exec(hint); // `:` is separator
-  return result ? `${result[1]}\t${result[3] ?? ""}` : null;
+
+function _findScriptPath(kindMap: KindMap, kind: string) {
+  let pth = path.join(kindMap[kind].head, kind, `${kind}.ts`);
+  let file = null;
+  try {
+    file = Deno.statSync(pth);
+  } catch (e) {
+    return null;
+  }
+  return file.isFile ? pth : null;
 }

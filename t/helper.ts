@@ -1,7 +1,13 @@
-import {walkSync} from "./deps.ts";
+import {walkSync} from "t/deps.ts";
 
 const EnvNames = ["SHDO_HOME", "XDG_CONFIG_DIRS", "XDG_CONFIG_HOME"] as const
-export type HandledEnv = typeof EnvNames
+type HandledEnv = typeof EnvNames
+export function setEnv(env: HandledEnv, val: string){
+  Deno.env.set(env, val);
+}
+export function delEnv(env: HandledEnv){
+  Deno.env.delete(env)
+}
 
 export class Helper {
   private _tmpDir: string | undefined;

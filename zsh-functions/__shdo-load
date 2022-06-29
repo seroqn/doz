@@ -1,4 +1,6 @@
 #!/bin/zsh -f
 emulate -L zsh
-autoload -Uz __shdo-deno
-autoload -Uz __shdo-print
+fpath+=("$SHDO_ROOT/zsh-functions/postload")
+local f
+for f in "$SHDO_ROOT/zsh-functions/postload/"*(N-.)
+  autoload -Uz -- "${f:t}"
