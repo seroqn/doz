@@ -31,6 +31,6 @@ export function _parseHint(hint: string | null) {
   } else if (/^#/.test(hint)){
     return '\t- ' + hint.replace(/^#\s?/, '')
   }
-  const result =  /^\s*([^: ].*?)(?:\s:\s*(.*))?$/.exec(hint); // `\s:` is separator
+  const result =  /^\s*([^: ].*?)(?:::\s*(.*))?$/.exec(hint); // `::` is separator
   return result ? `${result[1].trim()}\t${result[2] ?? ""}` : null;
 }
