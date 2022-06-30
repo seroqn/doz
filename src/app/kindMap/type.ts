@@ -1,6 +1,6 @@
 export type KindMap = {
   [kind: string]: {
-    head: string;
+    dir: string;
     scriptMod: null | Module;
   };
 };

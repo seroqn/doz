@@ -67,7 +67,7 @@ async function _findAndFire(
       if (output) {
         console.log(output);
       }
-      console.log(`${kindMap[kind].head}/${kind}/${kind}`);
+      console.log(`${kindMap[kind].dir}/${kind}`);
       return 0;
     }
   }
@@ -92,11 +92,12 @@ export function _nextEntryIdx(entries: Entry[], lbuffer: string, idx: number) {
 }
 
 function _findScriptPath(kindMap: KindMap, kind: string) {
-  let pth = path.join(kindMap[kind].head, kind, `${kind}.ts`);
+  let pth = path.join(kindMap[kind].dir, `${kind}.ts`);
   let file = null;
   try {
     file = Deno.statSync(pth);
   } catch (e) {
+    console.error(e);
     return null;
   }
   return file.isFile ? pth : null;

@@ -1,35 +1,38 @@
-import {_splitKinddirs, loadKindMap} from "src/app/kindMap/kindMap.ts";
-import { assertEquals, afterEach, describe, it } from "t/deps.ts"
-import {Helper, setEnv} from "t/helper.ts";
+import { _splitKinddirs, loadKindMap } from "src/app/kindMap/kindMap.ts";
+import { afterEach, assertEquals, describe, it, path } from "t/deps.ts";
+import { delEnv, Helper } from "t/helper.ts";
 
-describe('kindMap', ()=>{
-  describe('_splitKinddirs()', ()=>{
-    const helper = new Helper()
-    afterEach(()=>{
-      helper.restore()
-    })
-    it('改行で分割して配列にする', ()=>{
-      assertEquals(_splitKinddirs('aaa\nbb bb\nc cc'), [ "aaa", "bb bb", "c cc" ])
-    })
-    it('`$` で始まるディレクトリは環境変数と見なして展開する', ()=>{
-      setEnv('SHDO_HOME', '/tmp/foo')
-      assertEquals(_splitKinddirs('$SHDO_HOME/bar\n\${SHDO_HOME}/baz'), [ "/tmp/foo/bar", "/tmp/foo/baz" ])
-    })
-  })
+describe("kindMap", () => {
+  describe("_splitKinddirs()", () => {
+    it("`$` で始まるディレクトリは環境変数と見なして展開, `*` は glob 展開する", async () => {
+      const root = Deno.env.get("SHDO_ROOT");
+      assertEquals(
+        await _splitKinddirs("$SHDO_ROOT/shdokind/*\n\${SHDO_ROOT}/src/app/*"),
+        [
+          `${root}/shdokind/expand`,
+          `${root}/shdokind/hint`,
+          `${root}/src/app/kindMap`,
+          `${root}/src/app/settingfile`,
+        ].map((dir: string) => path.normalize(dir)),
+      );
+    });
+  });
 
-  describe('loadKindMap()', ()=>{
-    const helper = new Helper()
-    afterEach(()=>{
-      helper.restore()
-    })
-    it('load default kinds', async ()=>{
-      setEnv('SHDO_HOME', '$SHDO_ROOT/kinds')
-      const root = Deno.env.get('SHDO_ROOT')
+  describe("loadKindMap()", () => {
+    const helper = new Helper();
+    afterEach(() => {
+      helper.restore();
+    });
+    it("load default kinds", async () => {
+      delEnv("SHDO_KINDS_DIRS");
+      const root = Deno.env.get("SHDO_ROOT");
       assertEquals(await loadKindMap(), {
-        expand: {head: `${root}/kinds`, scriptMod: null},
-        hint: {head: `${root}/kinds`, scriptMod: null},
-      })
-    })
-  })
-})
-
+        expand: {
+          dir: path.normalize(`${root}/shdokind/expand`),
+          scriptMod: null,
+        },
+        hint: { dir: path.normalize(`${root}/shdokind/hint`), scriptMod: null },
+      });
+    });
+  });
+});
