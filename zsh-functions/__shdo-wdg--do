@@ -10,7 +10,8 @@ function (){
   out="$(__shdo-deno)"
   if [[ $? -ne 0 ]]; then
     echo
-  elif [[ -z "$out" ]]; then
+  fi
+  if [[ -z "$out" ]]; then
     zle reset-prompt
     return
   fi
