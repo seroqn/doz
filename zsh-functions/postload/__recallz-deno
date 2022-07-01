@@ -3,6 +3,6 @@ function (){
   if [[ "$LBUFFER" =~ '^ *$' ]]; then
     return
   fi
-  deno run --no-check --allow-env --allow-read "$SHDO_ROOT/src/cli.ts" "$LBUFFER"
+  deno run --no-check --allow-env --allow-read "$RECALLZ_ROOT/src/cli.ts" "$LBUFFER"
   return $?
 }

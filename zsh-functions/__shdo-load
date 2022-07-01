@@ -1,6 +1,0 @@
-#!/bin/zsh -f
-emulate -L zsh
-fpath+=("$SHDO_ROOT/zsh-functions/postload")
-local f
-for f in "$SHDO_ROOT/zsh-functions/postload/"*(N-.)
-  autoload -Uz -- "${f:t}"

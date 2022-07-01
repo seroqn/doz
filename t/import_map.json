@@ -1,7 +1,7 @@
 {
   "imports": {
     "src/": "../src/",
-    "kind/": "../shdokind/",
+    "kind/": "../rzkind/",
     "t/": "./"
   }
 }

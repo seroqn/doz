@@ -40,7 +40,7 @@ async function _findAndFire(
     const targEntry = entries[idx];
     const kind = "kind" in targEntry
       ? targEntry.kind
-      : Deno.env.get("SHDO_DEFAULT_KIND") ?? "hint";
+      : Deno.env.get("RECALLZ_DEFAULT_KIND") ?? "hint";
     if (!(kind in kindMap)) {
       console.error(`such kind is not found: "${kind}"`);
       return 1;

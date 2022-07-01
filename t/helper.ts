@@ -3,8 +3,8 @@ import { walkSync } from "t/deps.ts";
 const EnvNames = [
   "XDG_CONFIG_DIRS",
   "XDG_CONFIG_HOME",
-  "SHDO_HOME",
-  "SHDO_KINDS_DIRS",
+  "RECALLZ_HOME",
+  "RECALLZ_KINDS_DIRS",
 ] as const;
 type HandledEnv = typeof EnvNames;
 export function setEnv(env: HandledEnv, val: string) {

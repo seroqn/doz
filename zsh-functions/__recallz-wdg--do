@@ -1,13 +1,13 @@
 #!/bin/zsh -f
 emulate -L zsh
-if whence __shdo-load >/dev/null; then
+if whence __recallz-load >/dev/null; then
 else
-  builtin autoload -Uz __shdo-load && __shdo-load
+  builtin autoload -Uz __recallz-load && __recallz-load
 fi
 
 function (){
   local out
-  out="$(__shdo-deno)"
+  out="$(__recallz-deno)"
   if [[ $? -ne 0 ]]; then
     echo
   fi
@@ -27,7 +27,7 @@ function (){
     fi
   done
   if [[ -z "$file" ]]; then
-    __shdo-print "fail in loading kind file: \`$ftail.{zsh,sh}\`"
+    __recallz-print "fail in loading kind file: \`$ftail.{zsh,sh}\`"
   fi
   source "$file"
   zle reset-prompt

@@ -1,3 +1,3 @@
 #!/usr/bin/env zsh
 setopt sh_word_split
-__shdo-print "$1"
+__recallz-print "$1"

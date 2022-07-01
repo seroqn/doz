@@ -1,18 +1,18 @@
 #!/bin/zsh -f
 emulate -L zsh
-if whence __shdo-load >/dev/null; then
+if whence __recallz-load >/dev/null; then
 else
-  builtin autoload -Uz __shdo-load && __shdo-load
+  builtin autoload -Uz __recallz-load && __recallz-load
 fi
 
 function (){
   local out sel
-  out="$(__shdo-deno)"
+  out="$(__recallz-deno)"
   if [[ $? -ne 0 ]]; then
     echo
   fi
   if [[ -n "$out" ]]; then
-    sel=$(echo "$out" | fzf --prompt='shdo > ' --exact)
+    sel=$(echo "$out" | fzf --prompt='recallz > ' --exact)
     if [[ -n "$sel" ]]; then
       if [[ ! "$LBUFFER" =~ ' $' ]]; then
         LBUFFER="$LBUFFER "
