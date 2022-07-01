@@ -7,7 +7,7 @@ import { loadKindMap } from "./kindMap/kindMap.ts";
 import { KindMap } from "./kindMap/type.ts";
 import { path } from "./deps.ts";
 
-export async function execCli(lbuffer: string) {
+export function execCli(args: string[]) {
   const stpth = getSettingFilePath();
   const entries = loadSettingFile(stpth);
   if (!entries) {
@@ -15,6 +15,24 @@ export async function execCli(lbuffer: string) {
   } else if (!entries.length) {
     Deno.exit(0);
   }
+  const mode = args[0]
+  switch (mode) {
+    case "do":
+      if (args.length != 2) {
+        console.error(`Argument number must be 1 but ${args.length}.`);
+        Deno.exit(1);
+      }
+      _execDo(args[1], entries);
+      break;
+    case "cmd":
+      _execCmd(args.slice(1));
+      break;
+    default:
+      console.error(`unknown mode: "${mode}"`);
+      Deno.exit(1);
+  }
+}
+async function _execDo(lbuffer: string, entries: Entry[]) {
   const kindMap = await loadKindMap();
   switch (await _findAndFire(entries, lbuffer, kindMap)) {
     case 0:
@@ -25,6 +43,8 @@ export async function execCli(lbuffer: string) {
       break;
   }
   return;
+}
+function _execCmd(args: string[]) {
 }
 
 async function _findAndFire(
