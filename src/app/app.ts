@@ -77,7 +77,7 @@ export function _nextEntryIdx(entries: Entry[], lbuffer: string, idx: number) {
   for (let i = idx, len = entries.length; i < len; i++) {
     let entry = entries[i];
     if ("current" in entry) {
-      if (!(new RegExp(entry.current + "\\s*$").test(lbuffer))) {
+      if (!(new RegExp(`(?:^|\\s)${entry.current}\\s*$`).test(lbuffer))) {
         continue;
       }
     }
