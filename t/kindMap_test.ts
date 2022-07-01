@@ -7,7 +7,9 @@ describe("kindMap", () => {
     it("`$` で始まるディレクトリは環境変数と見なして展開, `*` は glob 展開する", async () => {
       const root = Deno.env.get("RECALLZ_ROOT");
       assertEquals(
-        await _splitKinddirs("$RECALLZ_ROOT/rzkind/*\n\${RECALLZ_ROOT}/src/app/*"),
+        await _splitKinddirs(
+          "$RECALLZ_ROOT/rzkind/*\n\${RECALLZ_ROOT}/src/app/*",
+        ),
         [
           `${root}/rzkind/expand`,
           `${root}/rzkind/hint`,

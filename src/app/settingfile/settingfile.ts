@@ -1,7 +1,7 @@
 import { existsSync, parseYaml, path, xdg } from "../deps.ts";
 import { Entry, isEntry } from "./type.ts";
 
-export const APPNAME_L = "recallz"
+export const APPNAME_L = "recallz";
 
 export function getSettingFilePath(): string {
   const FBASE = "entries.yml";
