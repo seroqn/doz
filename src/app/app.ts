@@ -2,7 +2,7 @@ import {
   getSettingFilePath,
   loadSettingFile,
 } from "./settingfile/settingfile.ts";
-import { conditionNames, Entry } from "./settingfile/type.ts";
+import { Entry } from "./settingfile/type.ts";
 import { loadKindMap } from "./kindMap/kindMap.ts";
 import { KindMap } from "./kindMap/type.ts";
 import { path } from "./deps.ts";

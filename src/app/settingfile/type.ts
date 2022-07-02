@@ -1,5 +1,3 @@
-export const conditionNames = ["current", "patterns"];
-
 export type Entry = {
   current?: string;
   patterns?: string[];
