@@ -53,6 +53,9 @@ export async function divide(
       cmd.showHelp();
       return 0;
     case "completions":
+    case "bash":
+    case "fish":
+    case "zsh":
       return 0;
     case "query":
       return query(!args.length ? '' : args[0].join(" "), options, entries, dflKind);
