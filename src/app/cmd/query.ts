@@ -5,7 +5,7 @@ import { loadKindMap } from "../kindMap/kindMap.ts";
 type Options = {
   kind: string;
 };
-export async function cmdDo(
+export async function query(
   lbuffer: string,
   options: Options,
   entries: Entry[],

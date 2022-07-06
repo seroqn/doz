@@ -1,4 +1,4 @@
-import { cmdDo } from "./cmd/cmdDo.ts";
+import { query } from "./cmd/query.ts";
 import { listTopics } from "./cmd/listTopics.ts";
 import { listKinds } from "./cmd/listKinds.ts";
 import { Command, CompletionsCommand, EnumType } from "./deps.ts";
@@ -55,7 +55,7 @@ export async function divide(
     case "completions":
       return 0;
     case "query":
-      return cmdDo(args.join(" "), options, entries, dflKind);
+      return query(!args.length ? '' : args[0].join(" "), options, entries, dflKind);
     case "list":
       const listingType = !args.length ? TOPICS : args[0];
       switch (listingType) {
