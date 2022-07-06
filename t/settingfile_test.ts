@@ -1,8 +1,8 @@
 import {
-  APPNAME_L,
   getSettingFilePath,
   loadSettingFile,
-} from "src/app/settingfile/settingfile.ts";
+} from "src/app/entry/settingfile.ts";
+import { APPNAME_L } from "src/app/const/app.ts";
 import { afterEach, assertEquals, describe, it, path } from "t/deps.ts";
 import { delEnv, Helper, setEnv } from "t/helper.ts";
 

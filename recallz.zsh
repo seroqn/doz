@@ -9,3 +9,5 @@ autoload -Uz __recallz-wdg--do
 #autoload -Uz __recallz-wdg--fzf
 zle -N recallz-do __recallz-wdg--do
 #zle -N recallz-fzf __recallz-wdg--fzf
+
+autoload -Uz recallz

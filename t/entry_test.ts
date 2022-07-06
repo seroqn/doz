@@ -1,4 +1,4 @@
-import { _nextEntryIdx } from "src/app/app.ts";
+import { _nextEntryIdx } from "src/app/entry/entry.ts";
 import { assertEquals, describe, it } from "t/deps.ts";
 
 describe("app", () => {

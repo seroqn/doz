@@ -6,8 +6,11 @@ else
 fi
 
 function (){
+  if [[ "$LBUFFER" =~ '^ *$' ]]; then
+    return
+  fi
   local out
-  out="$(__recallz-deno)"
+  out="$(__recallz-deno "do" "$LBUFFER")"
   if [[ $? -ne 0 ]]; then
     echo
   fi

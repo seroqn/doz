@@ -13,8 +13,10 @@ describe("kindMap", () => {
         [
           `${root}/rzkind/expand`,
           `${root}/rzkind/hint`,
+          `${root}/src/app/cmd`,
+          `${root}/src/app/const`,
+          `${root}/src/app/entry`,
           `${root}/src/app/kindMap`,
-          `${root}/src/app/settingfile`,
         ].map((dir: string) => path.normalize(dir)),
       );
     });
