@@ -13,8 +13,9 @@ function (){
   out="$(__recallz-deno "do" "$LBUFFER")"
   if [[ $? -ne 0 ]]; then
     echo
-  fi
-  if [[ -z "$out" ]]; then
+    zle reset-prompt
+    return
+  elif [[ -z "$out" ]]; then
     zle reset-prompt
     return
   fi
