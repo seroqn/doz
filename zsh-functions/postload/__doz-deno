@@ -1,0 +1,3 @@
+#!/bin/zsh -f
+deno run --no-check --allow-env --allow-read "$DOZ_ROOT/src/cli.ts" "$@"
+return $?

@@ -4,7 +4,7 @@ import { APPNAME_L } from "../const/app.ts";
 
 export function getSettingFilePath(): string {
   const FBASE = "entries.yml";
-  const homepath = Deno.env.get("RECALLZ_HOME");
+  const homepath = Deno.env.get("DOZ_HOME");
   if (homepath) {
     return path.join(homepath, FBASE);
   }

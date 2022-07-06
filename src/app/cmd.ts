@@ -12,7 +12,7 @@ export async function divide(
   qargs: string[],
   entries: Entry[],
 ): Promise<number> {
-  const dflKind = Deno.env.get("RECALLZ_DEFAULT_KIND") ?? "hint";
+  const dflKind = Deno.env.get("DOZ_DEFAULT_KIND") ?? "hint";
   const kindNames = _extractKindNames(entries, dflKind);
   const listingTypes = [TOPICS, KINDS];
   const parser = new Command()
@@ -20,12 +20,12 @@ export async function divide(
     .usage("<Command>")
     // query
     .command("query, q")
-    .description("show result of $RECALLZ_DEFAULT_KIND")
+    .description("show result of $DOZ_DEFAULT_KIND")
     .arguments("[args...]")
     .type("kindType", new EnumType(kindNames))
     .option(
       "-k, --kind <kind:kindType>",
-      "use kind insted of $RECALLZ_DEFAULT_KIND",
+      "use kind insted of $DOZ_DEFAULT_KIND",
       { default: dflKind },
     )
     // list

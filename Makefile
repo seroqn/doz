@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-SRCES := ./src ./t ./rzkind
+SRCES := ./src ./t ./dozkind
 ALLOW_FLG := --allow-env --allow-read --allow-write
 TEST_FLG := --unstable --import-map=./t/import_map.json
 

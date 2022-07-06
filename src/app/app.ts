@@ -18,7 +18,7 @@ export async function execCli(args: string[]) {
         console.error(`Argument number must be 1 but ${args.length}.`);
         Deno.exit(1);
       }
-      const dflKind = Deno.env.get("RECALLZ_DEFAULT_KIND") ?? "hint";
+      const dflKind = Deno.env.get("DOZ_DEFAULT_KIND") ?? "hint";
       execDo(args[1], entries, dflKind);
       break;
     case "cmd":

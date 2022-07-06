@@ -1,1 +1,1 @@
-export const APPNAME_L = "recallz";
+export const APPNAME_L = "doz";

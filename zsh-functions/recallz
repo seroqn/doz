@@ -1,8 +1,0 @@
-#!/bin/zsh -f
-emulate -L zsh
-if whence __recallz-load >/dev/null; then
-else
-  builtin autoload -Uz __recallz-load && __recallz-load
-fi
-
-__recallz-deno cmd "$@"

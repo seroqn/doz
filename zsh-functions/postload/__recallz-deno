@@ -1,3 +1,0 @@
-#!/bin/zsh -f
-deno run --no-check --allow-env --allow-read "$RECALLZ_ROOT/src/cli.ts" "$@"
-return $?

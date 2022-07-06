@@ -2,8 +2,8 @@ import { KindMap } from "./type.ts";
 import { expandGlob, path } from "../deps.ts";
 
 export async function loadKindMap(): KindMap {
-  const kinddirsEnv = Deno.env.get("RECALLZ_KINDS_DIRS") ??
-    "$RECALLZ_ROOT/rzkind/*";
+  const kinddirsEnv = Deno.env.get("DOZ_KINDS_DIRS") ??
+    "$DOZ_ROOT/dozkind/*";
   let kindMap: KindMap = {};
   for (let pth of await _splitKinddirs(kinddirsEnv)) {
     kindMap[path.basename(pth)] = { dir: pth, scriptMod: null };

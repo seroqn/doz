@@ -14,13 +14,13 @@ describe("settingfile", () => {
   });
 
   describe("getSettingFilePath()", () => {
-    it("$RECALLZ_HOME が定義されているならそれを起点にしたパスを返す", () => {
+    it("$DOZ_HOME が定義されているならそれを起点にしたパスを返す", () => {
       const tmpDir = helper.getTmpDir();
-      setEnv("RECALLZ_HOME", tmpDir);
+      setEnv("DOZ_HOME", tmpDir);
       assertEquals(getSettingFilePath(), path.join(tmpDir, FBASE));
     });
-    it(`$RECALLZ_HOME が未定義なら xdg.configDirs() 以下の存在する "${APPNAME_L}" ディレクトリを返す`, () => {
-      delEnv("RECALLZ_HOME");
+    it(`$DOZ_HOME が未定義なら xdg.configDirs() 以下の存在する "${APPNAME_L}" ディレクトリを返す`, () => {
+      delEnv("DOZ_HOME");
       const tmpDir = helper.getTmpDir();
       const existDir = path.join(tmpDir, "exist");
       const homeDir = path.join(existDir, APPNAME_L);
@@ -36,8 +36,8 @@ describe("settingfile", () => {
       setEnv("XDG_CONFIG_DIRS", xdgConfigDirs.join(path.delimiter));
       assertEquals(getSettingFilePath(), fpath);
     });
-    it(`$RECALLZ_HOME が未定義で xdg.configDirs() 以下の "${APPNAME_L}" が存在しなければ一番先頭のものを返す`, () => {
-      delEnv("RECALLZ_HOME");
+    it(`$DOZ_HOME が未定義で xdg.configDirs() 以下の "${APPNAME_L}" が存在しなければ一番先頭のものを返す`, () => {
+      delEnv("DOZ_HOME");
       const tmpDir = helper.getTmpDir();
       setEnv("XDG_CONFIG_HOME", tmpDir);
       assertEquals(

@@ -1,0 +1,8 @@
+#!/bin/zsh -f
+emulate -L zsh
+if whence __doz-load >/dev/null; then
+else
+  builtin autoload -Uz __doz-load && __doz-load
+fi
+
+__doz-deno cmd "$@"
