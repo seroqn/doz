@@ -1,5 +1,5 @@
-import { existsSync, parseYaml, path, xdg } from "../deps.ts";
 import { Entry, isEntry } from "./type.ts";
+import { existsSync, parseYaml, path, xdg } from "../deps.ts";
 import { APPNAME_L } from "../const/app.ts";
 
 export function getSettingFilePath(): string {
