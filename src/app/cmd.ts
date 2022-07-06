@@ -58,7 +58,12 @@ export async function divide(
     case "zsh":
       return 0;
     case "query":
-      return query(!args.length ? '' : args[0].join(" "), options, entries, dflKind);
+      return query(
+        !args.length ? "" : args[0].join(" "),
+        options,
+        entries,
+        dflKind,
+      );
     case "list":
       const listingType = !args.length ? TOPICS : args[0];
       switch (listingType) {
