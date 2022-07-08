@@ -9,20 +9,20 @@ describe("kinds/hint", () => {
       assertEquals(_hintIntoHPair("  "), null);
     });
     it("beging `#`, regard it as comment", () => {
-      assertEquals(_hintIntoHPair("# foo bar  baz"), ["", "#  foo bar  baz"]);
+      assertEquals(_hintIntoHPair("# foo bar  baz"), ["", "# foo bar  baz"]);
       assertEquals(_hintIntoHPair("# foo bar ::  baz"), [
         "",
-        "#  foo bar ::  baz",
+        "# foo bar ::  baz",
       ]);
     });
     it("beging `##`, regard it as comment", () => {
       assertEquals(_hintIntoHPair("## foo bar  baz"), [
         "",
-        "#  # foo bar  baz",
+        "## foo bar  baz",
       ]);
       assertEquals(_hintIntoHPair("### foo bar  baz"), [
         "",
-        "#  ## foo bar  baz",
+        "### foo bar  baz",
       ]);
     });
     it("skip empty label", () => {

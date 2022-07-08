@@ -20,17 +20,17 @@ export function fire(_: string, what: any) {
     Deno.exit(1);
   }
 
-  const fmt = `%-${WIDTH_THRESHOLD}s %s  %s`;
-  const hashIndent = " ".repeat(WIDTH_THRESHOLD + 2);
+  const fmt = `%s%-${WIDTH_THRESHOLD}s%s  %s`;
+  const indent = " ".repeat(4);
   const outs = what.hints.map((hint: string | null) => _hintIntoHPair(hint))
     .filter((pair: HPair | null) => pair).map((pair: HPair) => {
       if (!pair[0]) {
-        return hashIndent + pair[1];
+        return pair[1];
       }
       const sep = pair[1] ? "::" : "";
       return _isLong(pair[0])
-        ? `${pair[0]}\t${sep}  ${pair[1]}`
-        : sprintf(fmt, pair[0], sep, pair[1]);
+        ? `${indent}${pair[0]}\t${sep}  ${pair[1]}`
+        : sprintf(fmt, indent, pair[0], sep, pair[1]);
     });
   return [true, outs.join("\n")];
 }
@@ -40,10 +40,7 @@ export function _hintIntoHPair(hint: string | null): HPair | null {
   } else if (/^#/.test(hint)) {
     return [
       "",
-      hint.replace(
-        /^(#)(#*)\s?/,
-        (_: string, p1: string, p2: string) => `${p1}  ${p2}${p2 ? " " : ""}`,
-      ),
+      hint.replace(/^(#+)\s?/, "$1 ")
     ];
   }
   const result = /^\s*((?::(?::\S|[^:])|[^: ]).*?)(?:\s*|\s*::(?:\s*|\s+(.*)))$/
