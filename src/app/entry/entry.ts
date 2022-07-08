@@ -1,20 +1,21 @@
 import { Entry } from "./type.ts";
-import { KindMap } from "../kindMap/type.ts";
+import { FireResult, KindMap } from "../kindMap/type.ts";
 import { findScriptPath, loadScriptMod } from "../kindMap/loadScriptMod.ts";
 
+type Result = { kind: string; output: string | null | undefined };
 export async function findAndFire(
   entries: Entry[],
   lbuffer: string,
   kindMap: KindMap,
   dflKind: string,
-) {
+): Promise<[number, Result | null]> {
   for (let idx = 0, len = entries.length; idx < len; idx++) {
     idx = _nextEntryIdx(entries, lbuffer, idx);
     if (idx == -1) {
       return [0, null];
     }
     const targEntry = entries[idx];
-    const kind = "kind" in targEntry ? targEntry.kind : dflKind;
+    const kind = "kind" in targEntry ? targEntry.kind as string : dflKind;
     if (!(kind in kindMap)) {
       console.error(`such kind is not found: "${kind}"`);
       return [1, null];
@@ -27,12 +28,12 @@ export async function findAndFire(
       }
       mod = await loadScriptMod(pth, kindMap, kind);
     }
-    if (!("fire" in mod)) {
+    if (!(mod && "fire" in mod)) {
       continue;
     }
-    let [isMatched, output]: [boolean, string | null | undefined] = mod.fire(
+    let [isMatched, output]: FireResult = mod.fire(
       lbuffer,
-      targEntry.what,
+      targEntry.what ?? {},
     );
     if (isMatched) {
       return [0, { output, kind }];
@@ -57,5 +58,5 @@ function _isConditionMatched(entry: Entry, lbuffer: string) {
     }
   }
   return !("patterns" in entry) ||
-    entry.patterns.every((pat: string) => (new RegExp(pat)).test(lbuffer));
+    entry.patterns!.every((pat: string) => (new RegExp(pat)).test(lbuffer));
 }

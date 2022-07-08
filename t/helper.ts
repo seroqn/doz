@@ -6,7 +6,7 @@ const EnvNames = [
   "DOZ_HOME",
   "DOZ_KINDS_DIRS",
 ] as const;
-type HandledEnv = typeof EnvNames;
+type HandledEnv = typeof EnvNames[number];
 export function setEnv(env: HandledEnv, val: string) {
   Deno.env.set(env, val);
 }
@@ -64,7 +64,7 @@ export class Helper {
       return;
     }
     Deno.removeSync(this._tmpDir, { recursive: true });
-    if (walkSync(this.tmpParent, { maxdepth: 0 }).length == 0) {
+    if (Array.from(walkSync(this.tmpParent, { maxDepth: 0 })).length == 0) {
       Deno.removeSync(this.tmpParent, { recursive: true });
     }
     this._tmpDir = undefined;

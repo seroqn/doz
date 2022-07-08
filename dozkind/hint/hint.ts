@@ -34,7 +34,7 @@ export function fire(_: string, what: any) {
     });
   return [true, outs.join("\n")];
 }
-export function _hintIntoHPair(hint: string | null): HPair {
+export function _hintIntoHPair(hint: string | null): HPair | null {
   if (!hint) {
     return null;
   } else if (/^#/.test(hint)) {

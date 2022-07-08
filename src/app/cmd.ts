@@ -71,8 +71,9 @@ export async function divide(
           return listTopics(options, entries, dflKind);
         case KINDS:
           return listKinds(options, kindNames);
+        default: // unreachable
+          return 1;
       }
-      break;
     default:
       console.error(`unknown cmd: ${cmdName}`);
       return 1;
@@ -83,7 +84,7 @@ function _extractKindNames(entries: Entry[], dflKind: string) {
   const set: Set<string> = new Set([dflKind]);
   for (const et of entries) {
     if ("kind" in et) {
-      set.add(et.kind);
+      set.add(et.kind as string);
     }
   }
   return Array.from(set).sort();

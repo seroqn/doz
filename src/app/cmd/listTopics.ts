@@ -15,7 +15,7 @@ export function listTopics(
 ) {
   let cks: CondsKind[] = intoCondsKind(entries, dflKind);
   if ("include" in options) {
-    cks = filterCondsKind(cks, options.include);
+    cks = filterCondsKind(cks, options.include as string[]);
   }
   const topics = cks.map((ck: CondsKind) =>
     sprintf("%-19s (%s)", ck.conds.join(", "), ck.kind)
@@ -23,6 +23,7 @@ export function listTopics(
   for (const topic of topics) {
     console.log(topic);
   }
+  return 0;
 }
 
 function _extractKindNames(entries: Entry[], dflKind: string) {
@@ -42,7 +43,7 @@ function intoCondsKind(entries: Entry[], dflKind: string): CondsKind[] {
       conds.push(entry.current);
     }
     if ("patterns" in entry) {
-      conds = [...conds, ...entry.patterns];
+      conds = [...conds, ...(entry.patterns as string[])];
     }
     return { conds: conds.length ? conds : ["*"], kind: entry.kind ?? dflKind };
   });

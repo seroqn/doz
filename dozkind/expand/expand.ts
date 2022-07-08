@@ -6,7 +6,7 @@ function isExpansion(targ: any): targ is Expansion {
 
 export function fire(lbuffer: string, what: unknown) {
   if (
-    !(typeof what == "object" && "expansion" in what &&
+    !(what && typeof what == "object" && "expansion" in what &&
       isExpansion(what.expansion))
   ) {
     console.error(`invalid "what": ${JSON.stringify(what)}`);
@@ -24,6 +24,6 @@ export function _replaceExpansion(
   if (!(crrWordMatches && crrWordMatches[0] in expansion)) {
     return null;
   }
-  const expandee: string = expansion[crrWordMatches[0]];
+  const expandee = expansion[crrWordMatches[0]] as string;
   return lbuffer.slice(0, crrWordMatches.index) + expandee;
 }

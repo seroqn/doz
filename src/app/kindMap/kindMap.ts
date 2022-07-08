@@ -1,7 +1,7 @@
 import { KindMap } from "./type.ts";
 import { expandGlob, path } from "../deps.ts";
 
-export async function loadKindMap(): KindMap {
+export async function loadKindMap(): Promise<KindMap> {
   const kinddirsEnv = Deno.env.get("DOZ_KINDS_DIRS") ??
     "$DOZ_ROOT/dozkind/*";
   let kindMap: KindMap = {};
@@ -12,11 +12,11 @@ export async function loadKindMap(): KindMap {
 }
 export async function _splitKinddirs(kinddirsS: string) {
   let nest: Promise<string[]>[] = kinddirsS.split("\n").map(
-    async (dir: string) => {
+    async (dir: string) => { // replace envArgName
       dir = dir.replace(
         /^\${(.+?)}|^\$([^/:*?"<>|\\]+)/,
         (envname: string, p1: string | undefined, p2: string | undefined) =>
-          Deno.env.get(p1 ?? p2) ?? envname,
+          Deno.env.get(p1 ?? p2 as string) ?? envname,
       );
       let ret = [];
       for await (const f of expandGlob(dir)) {

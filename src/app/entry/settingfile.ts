@@ -22,7 +22,10 @@ export function loadSettingFile(pth: string): Entry[] | undefined {
   const text = Deno.readTextFileSync(pth);
   let ets: unknown[] | undefined;
   try {
-    ets = parseYaml(text);
+    const parsee: unknown = parseYaml(text);
+    if (Array.isArray(parsee)) {
+      ets = parsee;
+    }
   } catch (e: unknown) {
     console.error("Setting parsed error");
     throw (e);
@@ -35,5 +38,5 @@ export function loadSettingFile(pth: string): Entry[] | undefined {
       throw new Error(`invalid entry: ${JSON.stringify(et)}`);
     }
   }
-  return ets;
+  return ets as Entry[];
 }

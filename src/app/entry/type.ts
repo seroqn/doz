@@ -2,7 +2,7 @@ export type Entry = {
   current?: string;
   patterns?: string[];
   kind?: string;
-  what?: unknown;
+  what?: object;
 };
 
 export function isEntry(et: any): et is Entry {
@@ -11,7 +11,7 @@ export function isEntry(et: any): et is Entry {
     (!("current" in et) || typeof et.current == "string") &&
     (!("patterns" in et) ||
       Array.isArray(et.patterns) &&
-        et.patterns.every((el) => typeof el == "string")) &&
+        et.patterns.every((el: any) => typeof el == "string")) &&
     (!("kind" in et) || typeof et.kind == "string")
   );
 }
