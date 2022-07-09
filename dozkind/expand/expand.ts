@@ -3,11 +3,14 @@ function isExpansion(targ: any): targ is Expansion {
   return typeof targ == "object" &&
     Object.values(targ).every((value) => typeof value == "string");
 }
+type What = { expansion: Expansion };
+function isWhat(u: any): u is What {
+  return u != null && "expansion" in u && isExpansion(u.expansion);
+}
 
-export function fire(lbuffer: string, what: unknown) {
+export function fire(lbuffer: string, what: object) {
   if (
-    !(what && typeof what == "object" && "expansion" in what &&
-      isExpansion(what.expansion))
+    !isWhat(what)
   ) {
     console.error(`invalid "what": ${JSON.stringify(what)}`);
     Deno.exit(1);
@@ -21,9 +24,9 @@ export function _replaceExpansion(
   lbuffer: string,
 ) {
   const crrWordMatches = lbuffer.match(/\S+$/);
-  if (!(crrWordMatches && crrWordMatches[0] in expansion)) {
+  if (!(crrWordMatches && expansion[crrWordMatches[0]])) {
     return null;
   }
-  const expandee = expansion[crrWordMatches[0]] as string;
+  const expandee = expansion[crrWordMatches[0]];
   return lbuffer.slice(0, crrWordMatches.index) + expandee;
 }

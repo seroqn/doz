@@ -59,7 +59,7 @@ export async function divide(
       return 0;
     case "query":
       return query(
-        !args.length ? "" : args[0].join(" "),
+        !args.length ? "" : (args[0] as string[]).join(" "),
         options,
         entries,
         dflKind,
@@ -83,8 +83,8 @@ export async function divide(
 function _extractKindNames(entries: Entry[], dflKind: string) {
   const set: Set<string> = new Set([dflKind]);
   for (const et of entries) {
-    if ("kind" in et) {
-      set.add(et.kind as string);
+    if (et.kind) {
+      set.add(et.kind);
     }
   }
   return Array.from(set).sort();

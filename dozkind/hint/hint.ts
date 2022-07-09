@@ -40,7 +40,7 @@ export function _hintIntoHPair(hint: string | null): HPair | null {
   } else if (/^#/.test(hint)) {
     return [
       "",
-      hint.replace(/^(#+)\s?/, "$1 ")
+      hint.replace(/^(#+)\s?/, "$1 "),
     ];
   }
   const result = /^\s*((?::(?::\S|[^:])|[^: ]).*?)(?:\s*|\s*::(?:\s*|\s+(.*)))$/

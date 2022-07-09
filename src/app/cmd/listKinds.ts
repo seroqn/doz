@@ -2,8 +2,8 @@ type Options = {
   include?: string[];
 };
 export function listKinds(options: Options, kindNames: string[]) {
-  if ("include" in options) {
-    kindNames = _filterKinds(kindNames, options.include as string[]);
+  if (options.include) {
+    kindNames = _filterKinds(kindNames, options.include);
   }
   for (const kind of kindNames) {
     console.log(kind);

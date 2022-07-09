@@ -15,7 +15,7 @@ export async function findAndFire(
       return [0, null];
     }
     const targEntry = entries[idx];
-    const kind = "kind" in targEntry ? targEntry.kind as string : dflKind;
+    const kind = targEntry.kind ?? dflKind;
     if (!(kind in kindMap)) {
       console.error(`such kind is not found: "${kind}"`);
       return [1, null];

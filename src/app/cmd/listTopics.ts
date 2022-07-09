@@ -13,9 +13,9 @@ export function listTopics(
   entries: Entry[],
   dflKind: string,
 ) {
-  let cks: CondsKind[] = intoCondsKind(entries, dflKind);
-  if ("include" in options) {
-    cks = filterCondsKind(cks, options.include as string[]);
+  let cks: CondsKind[] = _intoCondsKind(entries, dflKind);
+  if (options.include) {
+    cks = _filterCondsKind(cks, options.include);
   }
   const topics = cks.map((ck: CondsKind) =>
     sprintf("%-19s (%s)", ck.conds.join(", "), ck.kind)
@@ -26,29 +26,19 @@ export function listTopics(
   return 0;
 }
 
-function _extractKindNames(entries: Entry[], dflKind: string) {
-  const set: Set<string> = new Set([dflKind]);
-  for (const et of entries) {
-    if ("kind" in et) {
-      set.add(et.kind);
-    }
-  }
-  return Array.from(set).sort();
-}
-
-function intoCondsKind(entries: Entry[], dflKind: string): CondsKind[] {
+function _intoCondsKind(entries: Entry[], dflKind: string): CondsKind[] {
   return entries.map((entry: Entry): CondsKind => {
     let conds: string[] = [];
-    if ("current" in entry) {
+    if (entry.current) {
       conds.push(entry.current);
     }
-    if ("patterns" in entry) {
-      conds = [...conds, ...(entry.patterns as string[])];
+    if (entry.patterns) {
+      conds = [...conds, ...(entry.patterns)];
     }
     return { conds: conds.length ? conds : ["*"], kind: entry.kind ?? dflKind };
   });
 }
-function filterCondsKind(cks: CondsKind[], includees: string[]) {
+function _filterCondsKind(cks: CondsKind[], includees: string[]) {
   return cks.filter(
     (ck: CondsKind) =>
       ck.conds.some(

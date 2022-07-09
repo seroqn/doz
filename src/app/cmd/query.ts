@@ -3,7 +3,7 @@ import { findAndFire } from "../entry/entry.ts";
 import { loadKindMap } from "../kindMap/kindMap.ts";
 
 type Options = {
-  kind: string;
+  kind?: string;
 };
 export async function query(
   lbuffer: string,
@@ -11,7 +11,7 @@ export async function query(
   entries: Entry[],
   dflKind: string,
 ) {
-  const targKind = options.kind;
+  const targKind = options!.kind;
   const isTargKindDflKind = targKind === dflKind;
   const qentries = entries.filter((entry: Entry) =>
     "kind" in entry ? entry.kind === targKind : isTargKindDflKind

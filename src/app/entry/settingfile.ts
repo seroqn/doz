@@ -1,4 +1,4 @@
-import { Entry, isEntry } from "./type.ts";
+import { Entry, isEntries } from "./type.ts";
 import { existsSync, parseYaml, path, xdg } from "../deps.ts";
 import { APPNAME_L } from "../const/app.ts";
 
@@ -33,10 +33,8 @@ export function loadSettingFile(pth: string): Entry[] | undefined {
   if (!ets) {
     return [];
   }
-  for (let et of ets) {
-    if (!isEntry(et)) {
-      throw new Error(`invalid entry: ${JSON.stringify(et)}`);
-    }
+  if (isEntries(ets)) {
+    return ets;
   }
-  return ets as Entry[];
+  // not reach
 }
